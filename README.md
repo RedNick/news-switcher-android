@@ -61,7 +61,8 @@ To base64-encode the file:
 
 - macOS: `base64 -i my-key.jks | pbcopy` (copies it to the clipboard)
 - Linux: `base64 -w0 my-key.jks`
-- Windows (PowerShell): `[Convert]::ToBase64String([IO.File]::ReadAllBytes("my-key.jks")) | Set-Clipboard`
+- Windows: open PowerShell in the folder with the key (in File Explorer, type `powershell` in the address bar and press Enter), then run `[Convert]::ToBase64String([IO.File]::ReadAllBytes((Resolve-Path .\my-key.jks))) | Set-Clipboard`. It copies the result to the clipboard and prints nothing.
+- Windows, from Command Prompt: `certutil -encodehex my-key.jks key-base64.txt 0x40000001`, then copy everything in `key-base64.txt`.
 
 Keep a private backup of the keystore. If it's lost, the next APK won't install over the old one: uninstall the app and install it fresh. Builds run without the secrets still work, but they're signed with a throwaway key.
 
