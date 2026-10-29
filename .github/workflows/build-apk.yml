@@ -29,7 +29,7 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      # The signing key is stored as two repo secrets (see README.md). Builds
+      # The signing key is stored as repo secrets (see README.md). Builds
       # without it still work, but can't update an installed copy.
       - name: Unpack the signing key
         env:
@@ -45,6 +45,8 @@ jobs:
       - name: Build the APK
         env:
           SIGNING_KEYSTORE_PASSWORD: ${{ secrets.SIGNING_KEYSTORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: ./gradlew assembleRelease
 
       - name: Give the APK a friendly name

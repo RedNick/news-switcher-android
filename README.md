@@ -48,10 +48,20 @@ On a phone, use the on-screen buttons as you would on the website.
 
 ## Signing key
 
-Android only installs an update if it's signed with the same key as the app already installed. The key is kept out of the repo and stored as two repository secrets (**Settings > Secrets and variables > Actions**):
+Android only installs an update if it's signed with the same key as the app already installed. The key is kept out of the repo. Any existing `.jks` or `.keystore` file works. Add it as repository secrets under **Settings > Secrets and variables > Actions**:
 
-- `SIGNING_KEYSTORE_BASE64`: the keystore file, base64-encoded
-- `SIGNING_KEYSTORE_PASSWORD`: its password (the key alias is `news-switcher`)
+| Secret | Value |
+| --- | --- |
+| `SIGNING_KEYSTORE_BASE64` | The keystore file, base64-encoded (see below) |
+| `SIGNING_KEYSTORE_PASSWORD` | The keystore's password |
+| `SIGNING_KEY_ALIAS` | The key's alias. Only needed if it isn't `news-switcher` |
+| `SIGNING_KEY_PASSWORD` | The key's own password. Only needed if it differs from the keystore password |
+
+To base64-encode the file:
+
+- macOS: `base64 -i my-key.jks | pbcopy` (copies it to the clipboard)
+- Linux: `base64 -w0 my-key.jks`
+- Windows (PowerShell): `[Convert]::ToBase64String([IO.File]::ReadAllBytes("my-key.jks")) | Set-Clipboard`
 
 Keep a private backup of the keystore. If it's lost, the next APK won't install over the old one: uninstall the app and install it fresh. Builds run without the secrets still work, but they're signed with a throwaway key.
 

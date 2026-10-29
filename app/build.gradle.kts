@@ -12,6 +12,11 @@ val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
 // Set by the GitHub Actions workflow from the repo's secrets.
 val signingKeystorePath: String? = System.getenv("SIGNING_KEYSTORE_PATH")
 val signingKeystorePassword: String? = System.getenv("SIGNING_KEYSTORE_PASSWORD")
+// The alias and key password are only needed when they differ from the
+// defaults (a key made for this app, called "news-switcher", whose password
+// is the same as the keystore's).
+val signingKeyAlias: String = System.getenv("SIGNING_KEY_ALIAS").orEmpty().ifEmpty { "news-switcher" }
+val signingKeyPassword: String? = System.getenv("SIGNING_KEY_PASSWORD").orEmpty().ifEmpty { signingKeystorePassword }
 
 android {
     namespace = "io.github.rednick.newsswitcher"
@@ -34,8 +39,8 @@ android {
             create("sideload") {
                 storeFile = file(keystorePath)
                 storePassword = signingKeystorePassword
-                keyAlias = "news-switcher"
-                keyPassword = signingKeystorePassword
+                keyAlias = signingKeyAlias
+                keyPassword = signingKeyPassword
             }
         }
     }
