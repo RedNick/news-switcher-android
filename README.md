@@ -52,10 +52,10 @@ Android only installs an update if it's signed with the same key as the app alre
 
 | Secret | Value |
 | --- | --- |
-| `SIGNING_KEYSTORE_BASE64` | The keystore file, base64-encoded (see below) |
-| `SIGNING_KEYSTORE_PASSWORD` | The keystore's password |
-| `SIGNING_KEY_ALIAS` | The key's alias. Only needed if it isn't `news-switcher` |
-| `SIGNING_KEY_PASSWORD` | The key's own password. Only needed if it differs from the keystore password |
+| `ANDROID_KEYSTORE_BASE64` | The keystore file, base64-encoded (see below) |
+| `ANDROID_KEYSTORE_PASSWORD` | The keystore's password |
+| `ANDROID_KEY_ALIAS` | The key's alias. Only needed if it isn't `news-switcher` |
+| `ANDROID_KEY_PASSWORD` | The key's own password. Only needed if it differs from the keystore password |
 
 To base64-encode the file:
 
