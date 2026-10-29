@@ -1,0 +1,69 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+plugins {
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+}
+
+// GitHub Actions numbers each build, so every published APK gets a higher
+// version code and installs over the previous one. Local builds are 1.
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+
+// Set by the GitHub Actions workflow from the repo's secrets.
+val signingKeystorePath: String? = System.getenv("SIGNING_KEYSTORE_PATH")
+val signingKeystorePassword: String? = System.getenv("SIGNING_KEYSTORE_PASSWORD")
+
+android {
+    namespace = "io.github.rednick.newsswitcher"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "io.github.rednick.newsswitcher"
+        minSdk = 26 // Android 8.0, which covers almost every phone and Android TV in use.
+        targetSdk = 35
+        versionCode = buildNumber
+        versionName = "1.0.$buildNumber"
+    }
+
+    signingConfigs {
+        // This app is installed by hand rather than from the Play Store, so
+        // every published build has to be signed with the same key or Android
+        // refuses to install it as an update. GitHub Actions passes the key in
+        // from the repo's secrets (see README.md, "Signing key").
+        signingKeystorePath?.let { keystorePath ->
+            create("sideload") {
+                storeFile = file(keystorePath)
+                storePassword = signingKeystorePassword
+                keyAlias = "news-switcher"
+                keyPassword = signingKeystorePassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            // Without the key (e.g. building on your own computer), fall back
+            // to Android's debug key. That APK works but can't update one
+            // installed from GitHub.
+            signingConfig = signingConfigs.findByName("sideload")
+                ?: signingConfigs.getByName("debug")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
+    }
+}
+
+dependencies {
+    // Only used for hiding the status and navigation bars.
+    implementation("androidx.core:core-ktx:1.13.1")
+}
