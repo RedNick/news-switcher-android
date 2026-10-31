@@ -20,21 +20,21 @@ val signingKeyPassword: String? = System.getenv("SIGNING_KEY_PASSWORD").orEmpty(
 
 android {
     namespace = "io.github.rednick.newsswitcher"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "io.github.rednick.newsswitcher"
+        applicationId = "uk.rdfn.newsswitcher" // The Google Play package name. Never change it once published.
         minSdk = 26 // Android 8.0, which covers almost every phone and Android TV in use.
-        targetSdk = 35
+        targetSdk = 36 // Google Play requires a recent target for new apps and updates.
         versionCode = buildNumber
         versionName = "1.0.$buildNumber"
     }
 
     signingConfigs {
-        // This app is installed by hand rather than from the Play Store, so
-        // every published build has to be signed with the same key or Android
-        // refuses to install it as an update. GitHub Actions passes the key in
-        // from the repo's secrets (see README.md, "Signing key").
+        // Every published build has to be signed with the same key or Android
+        // refuses to install it as an update. It also serves as the upload
+        // key for Google Play. GitHub Actions passes the key in from the
+        // repo's secrets (see README.md, "Signing key").
         signingKeystorePath?.let { keystorePath ->
             create("sideload") {
                 storeFile = file(keystorePath)

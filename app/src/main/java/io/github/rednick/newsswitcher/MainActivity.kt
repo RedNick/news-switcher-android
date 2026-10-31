@@ -6,11 +6,13 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.KeyEvent
 import android.view.WindowManager
+import android.window.OnBackInvokedDispatcher
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -73,6 +75,7 @@ class MainActivity : Activity() {
         }
         setContentView(webView)
         hideSystemBars()
+        listenForBackOnNewerAndroid()
 
         webView.loadUrl(SWITCHER_PAGE_URL)
     }
@@ -137,12 +140,25 @@ class MainActivity : Activity() {
         webView.evaluateJavascript("if (window.newsSwitcherRemote) { $pageAction; }", null)
     }
 
-    @Deprecated("Still called for the TV remote and on phones without predictive back.")
+    // Android 13 and later send Back here instead of to onBackPressed, and from
+    // Android 16 onBackPressed isn't called at all for this app.
+    private fun listenForBackOnNewerAndroid() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            onBackInvokedDispatcher.registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT
+            ) { handleBackPress() }
+        }
+    }
+
+    @Deprecated("Only called on Android 12 and older. Newer versions use listenForBackOnNewerAndroid.")
     override fun onBackPressed() {
+        handleBackPress()
+    }
+
+    private fun handleBackPress() {
         val now = System.currentTimeMillis()
         if (now - lastBackPressTime < BACK_AGAIN_TO_EXIT_MILLISECONDS) {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
+            finish()
             return
         }
         lastBackPressTime = now
