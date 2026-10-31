@@ -1,0 +1,32 @@
+# Pushes the Google Play store listing in play-store/ (text, graphics,
+# contact details) to Play. Runs when those files change on main, or by hand
+# from the Actions tab ("Run workflow").
+name: Update store listing
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "play-store/listing/**"
+      - "play-store/graphics/**"
+      - "play-store/store-details.json"
+      - "play-store/update_play_listing.py"
+  workflow_dispatch:
+
+jobs:
+  update-listing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the Google Play API client
+        run: pip install -r play-store/requirements.txt
+
+      - name: Upload the listing to Google Play
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: python3 play-store/update_play_listing.py

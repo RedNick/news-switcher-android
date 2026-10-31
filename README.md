@@ -91,4 +91,6 @@ Open the folder in Android Studio, or run `./gradlew assembleRelease` with the A
 - `app/src/main/assets/tv-remote.js`: added to the page so a TV remote can move between and press its buttons.
 - `app/src/main/AndroidManifest.xml`: lets the app install on both phones and TVs.
 - `app/src/main/res/`: app name, icon and TV banner.
+- `play-store/`: the Google Play store listing text, graphics and upload script (see `play-store/README.md`).
+- `.github/workflows/update-store-listing.yml`: uploads the store listing to Google Play.
 - `.github/workflows/build-apk.yml`: builds the APK and Play bundle, publishes the APK as a release and uploads the bundle to Google Play.
