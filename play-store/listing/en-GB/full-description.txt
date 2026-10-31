@@ -1,0 +1,24 @@
+News Switcher plays a live 24-hour news channel full screen and moves on to the next one a minute before every hour, so each channel's top-of-the-hour headlines are already playing when they start.
+
+Set it running on your TV, tablet or phone and get a fresh perspective on the news every hour, from international English-language broadcasters' official live streams.
+
+FEATURES
+• Live news, full screen, with no setup
+• Switches channel automatically one minute before every hour
+• Choose which channels to include in the rotation
+• Skip ahead or back at any time, and the hourly rotation carries on from there
+• Channels that aren't streaming are skipped automatically
+• Optional on-screen info: the current channel, the next one, and a countdown to the switch
+• Starts with the sound on, and keeps the screen awake while it plays
+• Works on Android phones, tablets and Android TV / Google TV
+
+TV REMOTE
+• Left / Right or Channel −/+: previous / next channel
+• Up / Down and OK: move around and choose on-screen options
+• Menu: open the settings and channel list
+• Back: close the menu (press twice to exit)
+
+PRIVACY
+News Switcher has no accounts, adverts or tracking. Your settings stay on your device.
+
+News Switcher shows each broadcaster's own live stream through YouTube's embedded player. It isn't affiliated with or endorsed by YouTube or any of the broadcasters, and streams are subject to their availability.
