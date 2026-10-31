@@ -74,7 +74,7 @@ Every push to `main` uploads a Play bundle (`.aab`) to the **internal testing** 
 
 What it needs:
 
-- The repository secret `GOOGLE_PLAY_SA_JSON`: the JSON key of a Google Cloud service account that has been invited in Play Console (**Users and permissions**) with permission to release to testing tracks.
+- The repository secret `PLAY_SERVICE_ACCOUNT_JSON`: the JSON key of a Google Cloud service account that has been invited in Play Console (**Users and permissions**) with permission to release to testing tracks.
 - The app's first bundle uploaded by hand. Google doesn't allow the API to make the first upload. Download `news-switcher-play-bundle` from the latest run in the Actions tab, unzip it, and upload `news-switcher.aab` to the internal testing track in Play Console.
 
 Play App Signing: when Play asks for the app signing key on the first upload, choose to use your own key (the same `.jks` as above). Then copies installed from GitHub and from Play are signed the same way and update each other. If you let Google generate a key instead, the two are separate as far as Android is concerned, and you'd need to uninstall one before installing the other.

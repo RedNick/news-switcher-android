@@ -7,6 +7,8 @@
 #   newest one is always at
 #   https://github.com/RedNick/news-switcher-android/releases/latest/download/news-switcher.apk
 #   and the bundle is uploaded to Google Play's internal testing track.
+# - "Run workflow" on main (Actions tab) does the same as a push, with a new
+#   version number. Use it instead of "Re-run", which reuses the old number.
 name: Build APK
 
 on:
@@ -67,7 +69,7 @@ jobs:
           path: news-switcher.aab
 
       - name: Publish as the latest release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: 1.0.${{ github.run_number }}
@@ -77,25 +79,25 @@ jobs:
             --title "News Switcher $VERSION" \
             --notes "Install on a phone or Android TV: see the README."
 
-      # Needs the GOOGLE_PLAY_SA_JSON secret (a Play Console service account
+      # Needs the PLAY_SERVICE_ACCOUNT_JSON secret (a Play Console service account
       # with release permission), and the app's first bundle uploaded to Play
       # Console by hand. Testers get it from the internal testing track.
       - name: Check for the Google Play key
         id: play_key
         env:
-          GOOGLE_PLAY_SA_JSON: ${{ secrets.GOOGLE_PLAY_SA_JSON }}
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: |
-          if [ -n "$GOOGLE_PLAY_SA_JSON" ]; then
+          if [ -n "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
             echo "available=true" >> "$GITHUB_OUTPUT"
           else
-            echo "::warning::No GOOGLE_PLAY_SA_JSON secret set, so nothing was uploaded to Google Play."
+            echo "::warning::No PLAY_SERVICE_ACCOUNT_JSON secret set, so nothing was uploaded to Google Play."
           fi
 
       - name: Upload to Google Play internal testing
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.play_key.outputs.available == 'true'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.play_key.outputs.available == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SA_JSON }}
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: uk.rdfn.newsswitcher
           releaseFiles: news-switcher.aab
           releaseName: "1.0.${{ github.run_number }}"
