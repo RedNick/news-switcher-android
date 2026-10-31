@@ -1,10 +1,12 @@
-# Builds the app's install file (APK) on every change.
+# Builds the app's install file (APK) and Google Play bundle (AAB) on every
+# change.
 #
 # - Pull requests: the APK is attached to the workflow run (Actions tab >
 #   the run > Artifacts) so it can be tried before merging.
 # - Pushes to main: the APK is also published as a GitHub release, so the
 #   newest one is always at
 #   https://github.com/RedNick/news-switcher-android/releases/latest/download/news-switcher.apk
+#   and the bundle is uploaded to Google Play's internal testing track.
 name: Build APK
 
 on:
@@ -42,20 +44,27 @@ jobs:
           echo "$SIGNING_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/news-switcher.keystore"
           echo "SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/news-switcher.keystore" >> "$GITHUB_ENV"
 
-      - name: Build the APK
+      - name: Build the APK and the Play bundle
         env:
           SIGNING_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease bundleRelease
 
-      - name: Give the APK a friendly name
-        run: cp app/build/outputs/apk/release/app-release.apk news-switcher.apk
+      - name: Give the files friendly names
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk news-switcher.apk
+          cp app/build/outputs/bundle/release/app-release.aab news-switcher.aab
 
       - uses: actions/upload-artifact@v4
         with:
           name: news-switcher-apk
           path: news-switcher.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: news-switcher-play-bundle
+          path: news-switcher.aab
 
       - name: Publish as the latest release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -67,3 +76,28 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "News Switcher $VERSION" \
             --notes "Install on a phone or Android TV: see the README."
+
+      # Needs the GOOGLE_PLAY_SA_JSON secret (a Play Console service account
+      # with release permission), and the app's first bundle uploaded to Play
+      # Console by hand. Testers get it from the internal testing track.
+      - name: Check for the Google Play key
+        id: play_key
+        env:
+          GOOGLE_PLAY_SA_JSON: ${{ secrets.GOOGLE_PLAY_SA_JSON }}
+        run: |
+          if [ -n "$GOOGLE_PLAY_SA_JSON" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No GOOGLE_PLAY_SA_JSON secret set, so nothing was uploaded to Google Play."
+          fi
+
+      - name: Upload to Google Play internal testing
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.play_key.outputs.available == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SA_JSON }}
+          packageName: uk.rdfn.newsswitcher
+          releaseFiles: news-switcher.aab
+          releaseName: "1.0.${{ github.run_number }}"
+          track: internal
+          status: completed

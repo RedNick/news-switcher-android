@@ -17,6 +17,8 @@ What the app adds on top of the website:
 
 A new APK is built automatically every time this repo's `main` branch changes. Installing a newer one over the old one keeps your settings.
 
+The same build is also uploaded to Google Play's **internal testing** track (see [Google Play](#google-play)).
+
 ## Installing on a phone or tablet
 
 1. Open the download link above on the phone.
@@ -66,6 +68,19 @@ To base64-encode the file:
 
 Keep a private backup of the keystore. If it's lost, the next APK won't install over the old one: uninstall the app and install it fresh. Builds run without the secrets still work, but they're signed with a throwaway key.
 
+## Google Play
+
+Every push to `main` uploads a Play bundle (`.aab`) to the **internal testing** track of the app `uk.rdfn.newsswitcher`. Testers you add in Play Console get updates from the Play Store. Promote a build to production in Play Console when you're ready.
+
+What it needs:
+
+- The repository secret `GOOGLE_PLAY_SA_JSON`: the JSON key of a Google Cloud service account that has been invited in Play Console (**Users and permissions**) with permission to release to testing tracks.
+- The app's first bundle uploaded by hand. Google doesn't allow the API to make the first upload. Download `news-switcher-play-bundle` from the latest run in the Actions tab, unzip it, and upload `news-switcher.aab` to the internal testing track in Play Console.
+
+Play App Signing: when Play asks for the app signing key on the first upload, choose to use your own key (the same `.jks` as above). Then copies installed from GitHub and from Play are signed the same way and update each other. If you let Google generate a key instead, the two are separate as far as Android is concerned, and you'd need to uninstall one before installing the other.
+
+The package name `uk.rdfn.newsswitcher` is permanent once on Play.
+
 ## Building it yourself
 
 Open the folder in Android Studio, or run `./gradlew assembleRelease` with the Android SDK installed. The APK ends up in `app/build/outputs/apk/release/`.
@@ -76,4 +91,4 @@ Open the folder in Android Studio, or run `./gradlew assembleRelease` with the A
 - `app/src/main/assets/tv-remote.js`: added to the page so a TV remote can move between and press its buttons.
 - `app/src/main/AndroidManifest.xml`: lets the app install on both phones and TVs.
 - `app/src/main/res/`: app name, icon and TV banner.
-- `.github/workflows/build-apk.yml`: builds and publishes the APK.
+- `.github/workflows/build-apk.yml`: builds the APK and Play bundle, publishes the APK as a release and uploads the bundle to Google Play.
