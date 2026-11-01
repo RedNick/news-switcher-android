@@ -5,6 +5,9 @@ listing/, and replaces the graphics with the ones in graphics/. Everything goes
 into one Play "edit", which is committed at the end, so a failure part way
 through changes nothing.
 
+Then sends the Data safety answers in data-safety.csv (Play Console's own
+export format), which Play applies straight away rather than through an edit.
+
 Usage (normally run by .github/workflows/update-store-listing.yml):
     PLAY_SERVICE_ACCOUNT_JSON='{...}' python3 play-store/update_play_listing.py
 """
@@ -21,6 +24,7 @@ PACKAGE_NAME = "uk.rdfn.newsswitcher"
 STORE_FOLDER = Path(__file__).parent
 LISTING_FOLDER = STORE_FOLDER / "listing"
 GRAPHICS_FOLDER = STORE_FOLDER / "graphics"
+DATA_SAFETY_FILE = STORE_FOLDER / "data-safety.csv"
 
 # Play's name for each kind of image, and where ours live. A folder means
 # "all the PNGs in it, in file name order".
@@ -99,6 +103,16 @@ def main():
 
     edits.commit(packageName=PACKAGE_NAME, editId=edit_id).execute()
     print("Committed to Google Play")
+
+    update_data_safety(play)
+
+
+def update_data_safety(play):
+    play.applications().dataSafety(
+        packageName=PACKAGE_NAME,
+        body={"safetyLabels": DATA_SAFETY_FILE.read_text(encoding="utf-8")},
+    ).execute()
+    print("Data safety answers sent")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 # Pushes the Google Play store listing in play-store/ (text, graphics,
-# contact details) to Play. Runs when those files change on main, or by hand
+# contact details, Data safety answers) to Play. Runs when those files change on main, or by hand
 # from the Actions tab ("Run workflow").
 name: Update store listing
 
@@ -10,6 +10,7 @@ on:
       - "play-store/listing/**"
       - "play-store/graphics/**"
       - "play-store/store-details.json"
+      - "play-store/data-safety.csv"
       - "play-store/update_play_listing.py"
   workflow_dispatch:
 
