@@ -9,6 +9,7 @@ by hand from the Actions tab.
 | --- | --- |
 | App name, short description, full description | `listing/en-GB/*.txt` |
 | Contact email, website, default language | `store-details.json` |
+| Data safety answers | `data-safety.csv` |
 | Store icon (512×512) | `graphics/icon.png` |
 | Feature graphic (1024×500) | `graphics/feature-graphic.png` |
 | Android TV banner (1280×720) | `graphics/tv-banner.png` |
@@ -18,6 +19,20 @@ by hand from the Actions tab.
 Limits: name 30 characters, short description 80, full description 4000.
 To add another language, add a folder such as `listing/fr-FR/` with the same
 three text files.
+
+## Data safety
+
+`data-safety.csv` is Play Console's own Data safety export with the answers
+filled in. To change an answer, set the third column (`Response value`) of
+its row to `TRUE`/`FALSE`, or clear it. A fresh blank template can be
+downloaded from Play Console (Data safety > Export to CSV).
+
+Current answers: the app itself collects nothing, but Google counts data
+collected by third-party code running inside an app, and the embedded YouTube
+player collects device IDs and viewing activity. So it declares "App
+interactions" and "Device or other IDs" as collected (not shared), required,
+not processed ephemerally, for app functionality, analytics and advertising.
+No accounts, data encrypted in transit, no deletion request option.
 
 ## Remaking the graphics
 
@@ -38,7 +53,6 @@ Google doesn't let these be set through its API. Under **Policy and programs > A
 | Content rating | Fill in the questionnaire as a news app. It has no user content, chat, purchases or location sharing. It shows live news, which can include real-world violence, so answer that question honestly. Expect a "Teen"/PEGI 12 type rating. |
 | Target audience | 18 and over (avoids the extra Families rules) |
 | News app | Yes. Then fill in the news declaration. It's an aggregator of broadcasters' official live streams. |
-| Data safety | The app itself collects nothing. Google also counts data collected by third-party code running in your app, though, and the embedded YouTube player does collect device IDs and viewing activity. The safer answer is to declare "Device or other IDs" and "App interactions" as collected but not shared, for analytics and app functionality. |
 | Government app | No |
 | Financial features / Health | None |
 | App category (Store settings) | News & Magazines |
