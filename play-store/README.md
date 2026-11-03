@@ -52,7 +52,7 @@ Google doesn't let these be set through its API. Under **Policy and programs > A
 | App access | All functionality is available without special access |
 | Content rating | Fill in the questionnaire as a news app. It has no user content, chat, purchases or location sharing. It shows live news, which can include real-world violence, so answer that question honestly. Expect a "Teen"/PEGI 12 type rating. |
 | Target audience | 18 and over (avoids the extra Families rules) |
-| News app | Yes. Then fill in the news declaration. It's an aggregator of broadcasters' official live streams. |
+| News app | Yes. Then fill in the news declaration. It's an aggregator of broadcasters' official live streams. Contact information URL: `https://rednick.github.io/news-switcher/contact.html` (Google's News policy needs a labelled contact page on the website and in the app; the ☰ menu has a "Contact us" section). |
 | Government app | No |
 | Financial features / Health | None |
 | App category (Store settings) | News & Magazines |

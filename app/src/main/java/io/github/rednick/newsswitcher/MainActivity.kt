@@ -156,6 +156,12 @@ class MainActivity : Activity() {
     }
 
     private fun handleBackPress() {
+        // On the contact or privacy page (opened from the ☰ menu), Back
+        // returns to the switcher instead of counting towards exiting.
+        if (webView.canGoBack()) {
+            webView.goBack()
+            return
+        }
         val now = System.currentTimeMillis()
         if (now - lastBackPressTime < BACK_AGAIN_TO_EXIT_MILLISECONDS) {
             finish()
