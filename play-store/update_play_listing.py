@@ -101,8 +101,13 @@ def main():
     edits.details().update(packageName=PACKAGE_NAME, editId=edit_id, body=store_details).execute()
     print("Contact details and default language set")
 
-    edits.commit(packageName=PACKAGE_NAME, editId=edit_id).execute()
-    print("Committed to Google Play")
+    # Once an app has been through review, Play won't let the API send
+    # changes for review itself. The changes are saved, and then sent from
+    # Play Console's Publishing overview.
+    edits.commit(
+        packageName=PACKAGE_NAME, editId=edit_id, changesNotSentForReview=True
+    ).execute()
+    print("Committed to Google Play. Send for review from Publishing overview in Play Console.")
 
     update_data_safety(play)
 
